@@ -1,0 +1,58 @@
+[project]
+name = "lab-instruments"
+version = "0.1.0"
+description = "Control for instruments and sensors in the lab, adding custom API"
+readme = "README.md"
+authors = [
+    { name = "Cristian Bourceanu", email = "v.c.bourceanu@sms.ed.ac.uk" }
+]
+requires-python = ">=3.12"
+keywords = ["lab", "instruments", "control", "quantic", "prima"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+  "colorlog>=6.9.0",
+  "editables>=0.5",
+  "grpcio>=1.62.3",
+  "grpcio-tools>=1.62.3",
+  "protobuf<6.0.0",
+  "h5py>=3.8.0",
+  "hdf5plugin>=4.4.0",
+  "juliacall>=0.9.19",
+  "numpy>=1.21.6",
+  "pyvisa",
+  "scikit-learn>=1.7.1",
+  "sepia2-client-py>=0.2.0",
+  "pyvisa-py>=0.8.0",
+  "zeroconf>=0.147.0",
+  "pyusb>=1.3.1",
+]
+
+[dependency-groups]
+dev = [
+  "ruff>=0.7.2",
+  {include-group = "test"},
+  "editables",
+]
+test = ["pytest>=8.3.5"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_functions = "test_*"
+
+[project.urls]
+"Homepage" = "https://git.ecdf.ed.ac.uk/lidar-research/instruments/lab-instruments"
+"Documentation" = "https://git-pages.ecdf.ed.ac.uk/lidar-research/instruments/lab-instruments"
+"Bug Tracker" = "https://git.ecdf.ed.ac.uk/lidar-research/instruments/lab-instruments/-/issues"
+
+# FIXME: This is a workaround for hatchling not supporting the layout of package down the repo hierarchy
+[tool.hatch.build.targets.wheel]
+packages = ["src/lab-instruments"]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
