@@ -19,7 +19,7 @@ from .load_qc import jlconvert as jlconvert
 __all__ = [
     'delay_gen',
     'laser',
-    'quantic',
+    #'quantic',
     'jl',
     'jlconvert',
     'power_meter'
