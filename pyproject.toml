@@ -1,6 +1,6 @@
 [project]
 name = "lab-instruments"
-version = "0.4.0"
+version = "0.4.1"
 description = "Control for instruments and sensors in the lab, adding custom API"
 readme = "README.md"
 authors = [
@@ -38,6 +38,7 @@ dev = [
   "ruff>=0.7.2",
   {include-group = "test"},
   "editables",
+  "setuptools",
 ]
 test = ["pytest>=8.3.5"]
 

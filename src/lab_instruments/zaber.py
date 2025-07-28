@@ -1,7 +1,6 @@
 from zaber_motion import Units
 from zaber_motion.ascii import Connection
 import serial
-import serial.tools.list_ports
 
 from logging import info
 
@@ -19,11 +18,12 @@ class ZaberStage:
         else:
             self.port = self._find_serial_port(self.VID, self.PID)
 
+        if not self.port:
+            raise ValueError(f"Zaber stage not found on port {self.port}.")
         connection = Connection.open_serial_port(self.port)
         device_list = connection.detect_devices()
         info("Found {} devices".format(len(device_list)))
         device = device_list[0]
-        self.axis = device.get_axis(1)
         # Initialize the Zaber stage here
         axis = device.get_axis(1)
         if not axis.is_homed():
