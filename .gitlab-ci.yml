@@ -9,11 +9,13 @@ variables:
   UV_PUBLISH_USERNAME: "gitlab-ci-token"
   UV_PUBLISH_PASSWORD: "${CI_JOB_TOKEN}"
 
-before_script:
-  - pip install uv==$UV_VERSION
+#before_script:
+#  - pip install uv==$UV_VERSION
 
 build:
   stage: build
+  tags:
+    - nix
   script:
     - uv build
   artifacts:
