@@ -14,6 +14,7 @@ from . import laser as laser
 from . import load_qc as quantic
 from . import pm400 as power_meter
 from . import h5_utils as h5_utils
+from . import zaber as zaber
 from .load_qc import jl as jl
 from .load_qc import jlconvert as jlconvert
 
@@ -25,4 +26,5 @@ __all__ = [
     'jl',
     'jlconvert',
     'h5_utils',
+    'zaber',
 ]

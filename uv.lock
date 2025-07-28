@@ -42,6 +42,15 @@ wheels = [
 ]
 
 [[package]]
+name = "future"
+version = "1.0.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/a7/b2/4140c69c6a66432916b26158687e821ba631a4c9273c474343badf84d3ba/future-1.0.0.tar.gz", hash = "sha256:bd2968309307861edae1458a4f8a4f3598c03be43b97521076aebf5d94c07b05", size = 1228490, upload-time = "2024-02-21T11:52:38.461Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/da/71/ae30dadffc90b9006d77af76b393cb9dfbfc9629f339fc1574a1c52e6806/future-1.0.0-py3-none-any.whl", hash = "sha256:929292d34f5872e70396626ef385ec22355a1fae8ad29e1a734c3e43f9fbc216", size = 491326, upload-time = "2024-02-21T11:52:35.956Z" },
+]
+
+[[package]]
 name = "grpcio"
 version = "1.73.1"
 source = { registry = "https://pypi.org/simple" }
@@ -158,6 +167,15 @@ wheels = [
 ]
 
 [[package]]
+name = "iso8601"
+version = "2.1.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/b9/f3/ef59cee614d5e0accf6fd0cbba025b93b272e626ca89fb70a3e9187c5d15/iso8601-2.1.0.tar.gz", hash = "sha256:6b1d3829ee8921c4301998c909f7829fa9ed3cbdac0d3b16af2d743aed1ba8df", size = 6522, upload-time = "2023-10-03T00:25:39.317Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6c/0c/f37b6a241f0759b7653ffa7213889d89ad49a2b76eb2ddf3b57b2738c347/iso8601-2.1.0-py3-none-any.whl", hash = "sha256:aac4145c4dcb66ad8b648a02830f5e2ff6c24af20f4f482689be402db2429242", size = 7545, upload-time = "2023-10-03T00:25:32.304Z" },
+]
+
+[[package]]
 name = "joblib"
 version = "1.5.1"
 source = { registry = "https://pypi.org/simple" }
@@ -193,7 +211,7 @@ wheels = [
 
 [[package]]
 name = "lab-instruments"
-version = "0.1.0"
+version = "0.4.0"
 source = { editable = "." }
 dependencies = [
     { name = "colorlog" },
@@ -210,6 +228,8 @@ dependencies = [
     { name = "pyvisa-py" },
     { name = "scikit-learn" },
     { name = "sepia2-client-py" },
+    { name = "serial" },
+    { name = "zaber-motion" },
     { name = "zeroconf" },
 ]
 
@@ -239,6 +259,8 @@ requires-dist = [
     { name = "pyvisa-py", specifier = ">=0.8.0" },
     { name = "scikit-learn", specifier = ">=1.7.1" },
     { name = "sepia2-client-py", specifier = ">=0.2.0" },
+    { name = "serial", specifier = ">=0.0.97" },
+    { name = "zaber-motion", specifier = ">=7.10.0" },
     { name = "zeroconf", specifier = ">=0.147.0" },
 ]
 
@@ -383,6 +405,44 @@ wheels = [
 ]
 
 [[package]]
+name = "pyyaml"
+version = "6.0.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/54/ed/79a089b6be93607fa5cdaedf301d7dfb23af5f25c398d5ead2525b063e17/pyyaml-6.0.2.tar.gz", hash = "sha256:d584d9ec91ad65861cc08d42e834324ef890a082e591037abe114850ff7bbc3e", size = 130631, upload-time = "2024-08-06T20:33:50.674Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/86/0c/c581167fc46d6d6d7ddcfb8c843a4de25bdd27e4466938109ca68492292c/PyYAML-6.0.2-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:c70c95198c015b85feafc136515252a261a84561b7b1d51e3384e0655ddf25ab", size = 183873, upload-time = "2024-08-06T20:32:25.131Z" },
+    { url = "https://files.pythonhosted.org/packages/a8/0c/38374f5bb272c051e2a69281d71cba6fdb983413e6758b84482905e29a5d/PyYAML-6.0.2-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:ce826d6ef20b1bc864f0a68340c8b3287705cae2f8b4b1d932177dcc76721725", size = 173302, upload-time = "2024-08-06T20:32:26.511Z" },
+    { url = "https://files.pythonhosted.org/packages/c3/93/9916574aa8c00aa06bbac729972eb1071d002b8e158bd0e83a3b9a20a1f7/PyYAML-6.0.2-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:1f71ea527786de97d1a0cc0eacd1defc0985dcf6b3f17bb77dcfc8c34bec4dc5", size = 739154, upload-time = "2024-08-06T20:32:28.363Z" },
+    { url = "https://files.pythonhosted.org/packages/95/0f/b8938f1cbd09739c6da569d172531567dbcc9789e0029aa070856f123984/PyYAML-6.0.2-cp312-cp312-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:9b22676e8097e9e22e36d6b7bda33190d0d400f345f23d4065d48f4ca7ae0425", size = 766223, upload-time = "2024-08-06T20:32:30.058Z" },
+    { url = "https://files.pythonhosted.org/packages/b9/2b/614b4752f2e127db5cc206abc23a8c19678e92b23c3db30fc86ab731d3bd/PyYAML-6.0.2-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:80bab7bfc629882493af4aa31a4cfa43a4c57c83813253626916b8c7ada83476", size = 767542, upload-time = "2024-08-06T20:32:31.881Z" },
+    { url = "https://files.pythonhosted.org/packages/d4/00/dd137d5bcc7efea1836d6264f049359861cf548469d18da90cd8216cf05f/PyYAML-6.0.2-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:0833f8694549e586547b576dcfaba4a6b55b9e96098b36cdc7ebefe667dfed48", size = 731164, upload-time = "2024-08-06T20:32:37.083Z" },
+    { url = "https://files.pythonhosted.org/packages/c9/1f/4f998c900485e5c0ef43838363ba4a9723ac0ad73a9dc42068b12aaba4e4/PyYAML-6.0.2-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:8b9c7197f7cb2738065c481a0461e50ad02f18c78cd75775628afb4d7137fb3b", size = 756611, upload-time = "2024-08-06T20:32:38.898Z" },
+    { url = "https://files.pythonhosted.org/packages/df/d1/f5a275fdb252768b7a11ec63585bc38d0e87c9e05668a139fea92b80634c/PyYAML-6.0.2-cp312-cp312-win32.whl", hash = "sha256:ef6107725bd54b262d6dedcc2af448a266975032bc85ef0172c5f059da6325b4", size = 140591, upload-time = "2024-08-06T20:32:40.241Z" },
+    { url = "https://files.pythonhosted.org/packages/0c/e8/4f648c598b17c3d06e8753d7d13d57542b30d56e6c2dedf9c331ae56312e/PyYAML-6.0.2-cp312-cp312-win_amd64.whl", hash = "sha256:7e7401d0de89a9a855c839bc697c079a4af81cf878373abd7dc625847d25cbd8", size = 156338, upload-time = "2024-08-06T20:32:41.93Z" },
+    { url = "https://files.pythonhosted.org/packages/ef/e3/3af305b830494fa85d95f6d95ef7fa73f2ee1cc8ef5b495c7c3269fb835f/PyYAML-6.0.2-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:efdca5630322a10774e8e98e1af481aad470dd62c3170801852d752aa7a783ba", size = 181309, upload-time = "2024-08-06T20:32:43.4Z" },
+    { url = "https://files.pythonhosted.org/packages/45/9f/3b1c20a0b7a3200524eb0076cc027a970d320bd3a6592873c85c92a08731/PyYAML-6.0.2-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:50187695423ffe49e2deacb8cd10510bc361faac997de9efef88badc3bb9e2d1", size = 171679, upload-time = "2024-08-06T20:32:44.801Z" },
+    { url = "https://files.pythonhosted.org/packages/7c/9a/337322f27005c33bcb656c655fa78325b730324c78620e8328ae28b64d0c/PyYAML-6.0.2-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0ffe8360bab4910ef1b9e87fb812d8bc0a308b0d0eef8c8f44e0254ab3b07133", size = 733428, upload-time = "2024-08-06T20:32:46.432Z" },
+    { url = "https://files.pythonhosted.org/packages/a3/69/864fbe19e6c18ea3cc196cbe5d392175b4cf3d5d0ac1403ec3f2d237ebb5/PyYAML-6.0.2-cp313-cp313-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:17e311b6c678207928d649faa7cb0d7b4c26a0ba73d41e99c4fff6b6c3276484", size = 763361, upload-time = "2024-08-06T20:32:51.188Z" },
+    { url = "https://files.pythonhosted.org/packages/04/24/b7721e4845c2f162d26f50521b825fb061bc0a5afcf9a386840f23ea19fa/PyYAML-6.0.2-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:70b189594dbe54f75ab3a1acec5f1e3faa7e8cf2f1e08d9b561cb41b845f69d5", size = 759523, upload-time = "2024-08-06T20:32:53.019Z" },
+    { url = "https://files.pythonhosted.org/packages/2b/b2/e3234f59ba06559c6ff63c4e10baea10e5e7df868092bf9ab40e5b9c56b6/PyYAML-6.0.2-cp313-cp313-musllinux_1_1_aarch64.whl", hash = "sha256:41e4e3953a79407c794916fa277a82531dd93aad34e29c2a514c2c0c5fe971cc", size = 726660, upload-time = "2024-08-06T20:32:54.708Z" },
+    { url = "https://files.pythonhosted.org/packages/fe/0f/25911a9f080464c59fab9027482f822b86bf0608957a5fcc6eaac85aa515/PyYAML-6.0.2-cp313-cp313-musllinux_1_1_x86_64.whl", hash = "sha256:68ccc6023a3400877818152ad9a1033e3db8625d899c72eacb5a668902e4d652", size = 751597, upload-time = "2024-08-06T20:32:56.985Z" },
+    { url = "https://files.pythonhosted.org/packages/14/0d/e2c3b43bbce3cf6bd97c840b46088a3031085179e596d4929729d8d68270/PyYAML-6.0.2-cp313-cp313-win32.whl", hash = "sha256:bc2fa7c6b47d6bc618dd7fb02ef6fdedb1090ec036abab80d4681424b84c1183", size = 140527, upload-time = "2024-08-06T20:33:03.001Z" },
+    { url = "https://files.pythonhosted.org/packages/fa/de/02b54f42487e3d3c6efb3f89428677074ca7bf43aae402517bc7cca949f3/PyYAML-6.0.2-cp313-cp313-win_amd64.whl", hash = "sha256:8388ee1976c416731879ac16da0aff3f63b286ffdd57cdeb95f3f2e085687563", size = 156446, upload-time = "2024-08-06T20:33:04.33Z" },
+]
+
+[[package]]
+name = "reactivex"
+version = "4.0.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ef/63/f776322df4d7b456446eff78c4e64f14c3c26d57d46b4e06c18807d5d99c/reactivex-4.0.4.tar.gz", hash = "sha256:e912e6591022ab9176df8348a653fe8c8fa7a301f26f9931c9d8c78a650e04e8", size = 119177, upload-time = "2022-07-16T07:11:53.689Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/69/3f/2ed8c1b8fe3fc2ed816ba40554ef703aad8c51700e2606c139fcf9b7f791/reactivex-4.0.4-py3-none-any.whl", hash = "sha256:0004796c420bd9e68aad8e65627d85a8e13f293de76656165dffbcb3a0e3fb6a", size = 217791, upload-time = "2022-07-16T07:11:52.061Z" },
+]
+
+[[package]]
 name = "ruff"
 version = "0.12.5"
 source = { registry = "https://pypi.org/simple" }
@@ -497,6 +557,20 @@ wheels = [
 ]
 
 [[package]]
+name = "serial"
+version = "0.0.97"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "future" },
+    { name = "iso8601" },
+    { name = "pyyaml" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/9b/05/54c6fb8861d973ded4bc16f2cd4d85582a97c6fff81320dc1a281995cecc/serial-0.0.97.tar.gz", hash = "sha256:542150a127ddbf5ed2acc3a6ac4ce807cbcdae3b197acf785bbda6565c94f848", size = 33329, upload-time = "2019-01-30T19:11:20.368Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1f/51/6a260c498162c37d0759f3759b7647a10d8d30caba1cfc9aa4b5b1f0d08b/serial-0.0.97-py2.py3-none-any.whl", hash = "sha256:e887f06e07e190e39174b694eee6724e3c48bd361be1d97964caef5d5b61c73b", size = 40932, upload-time = "2019-01-30T19:11:23.384Z" },
+]
+
+[[package]]
 name = "setuptools"
 version = "80.9.0"
 source = { registry = "https://pypi.org/simple" }
@@ -521,6 +595,24 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/98/5a/da40306b885cc8c09109dc2e1abd358d5684b1425678151cdaed4731c822/typing_extensions-4.14.1.tar.gz", hash = "sha256:38b39f4aeeab64884ce9f74c94263ef78f3c22467c8724005483154c26648d36", size = 107673, upload-time = "2025-07-04T13:28:34.16Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b5/00/d631e67a838026495268c2f6884f3711a15a9a2a96cd244fdaea53b823fb/typing_extensions-4.14.1-py3-none-any.whl", hash = "sha256:d1e1e3b58374dc93031d6eda2420a48ea44a36c2b4766a4fdeb3710755731d76", size = 43906, upload-time = "2025-07-04T13:28:32.743Z" },
+]
+
+[[package]]
+name = "zaber-motion"
+version = "7.10.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "reactivex" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d8/9f/7c02ec9e2b7b16ef1f54172c04138b193f6a8ab5ca0c1043f82bf3232a7c/zaber_motion-7.10.0.tar.gz", hash = "sha256:9380a7077eeb6cb8c0caeb0b1df578c3b22094518e5ca6430e7a06d364b79bf9", size = 262234, upload-time = "2025-07-09T21:08:09.489Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/41/fc/e73228a0b1c10997b4560c0e212224a3b31ea2a67563a6bc722da349ce2f/zaber_motion-7.10.0-py3-none-macosx_10_4_universal2.whl", hash = "sha256:94416d5a3ec7695d3bf5d50e88957e1cabc5ce5b61e386387b5228ce57882125", size = 11776946, upload-time = "2025-07-09T21:07:54.666Z" },
+    { url = "https://files.pythonhosted.org/packages/3c/5d/d41e07f1a0f5aa5326cec3b40edb24e9e41b68b49f8ecf9b5ff6bad63b76/zaber_motion-7.10.0-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:5538e75be93793a27adb03f3421174b7aa133508b3667c8e6ceb1df2521e7a92", size = 6021226, upload-time = "2025-07-09T21:07:58.798Z" },
+    { url = "https://files.pythonhosted.org/packages/f1/98/0524c0d85ff6bc77b251f0b0d592e85758725cc9bf136a7d5a79e1175779/zaber_motion-7.10.0-py3-none-manylinux_2_27_armv7l.whl", hash = "sha256:8b511c7cdacdf903366a80a75bcab4c3832f263258896484991bd8779ee08ee8", size = 6105689, upload-time = "2025-07-09T21:08:01.049Z" },
+    { url = "https://files.pythonhosted.org/packages/c6/65/72120cb20d68474ae24371f69fd3b777af222248552732170ce0923e4e7e/zaber_motion-7.10.0-py3-none-manylinux_2_27_x86_64.whl", hash = "sha256:889794ac958f94fc042dab3221c0e9aa8b7f7f4259e0ea58941d3cc3218059d9", size = 6565517, upload-time = "2025-07-09T21:08:02.985Z" },
+    { url = "https://files.pythonhosted.org/packages/dc/8b/5fec30e7653d8ca8217d15c42ab18fafeea9322cb039601d04bd3c01bece/zaber_motion-7.10.0-py3-none-win32.whl", hash = "sha256:2702eadcd44b2edcfe0fbc9caef40b8420a9a594a79453fc2547140706daf488", size = 6256343, upload-time = "2025-07-09T21:08:04.581Z" },
+    { url = "https://files.pythonhosted.org/packages/49/1c/c9003f9e8c79ecec681d30eba5e74a35c1d40bf4cf1302ce3721371cc1c3/zaber_motion-7.10.0-py3-none-win_amd64.whl", hash = "sha256:2f520c549e386e19011e354ae390b4ffedfdb39532efefbb3553c272d7c72778", size = 6492724, upload-time = "2025-07-09T21:08:06.228Z" },
+    { url = "https://files.pythonhosted.org/packages/16/4e/ef96262b95b34671622aa08e5840f0da43fabf129344dea9f32ba4fd452c/zaber_motion-7.10.0-py3-none-win_arm64.whl", hash = "sha256:29dc8c164cebefe0f2b8973939e76a6ca7dec822955019c88def451c87e08c9f", size = 5892401, upload-time = "2025-07-09T21:08:08.207Z" },
 ]
 
 [[package]]

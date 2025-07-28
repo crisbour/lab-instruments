@@ -1,6 +1,6 @@
 [project]
 name = "lab-instruments"
-version = "0.3.0"
+version = "0.4.0"
 description = "Control for instruments and sensors in the lab, adding custom API"
 readme = "README.md"
 authors = [
@@ -29,6 +29,8 @@ dependencies = [
   "pyvisa-py>=0.8.0",
   "zeroconf>=0.147.0",
   "pyusb>=1.3.1",
+  "serial>=0.0.97",
+  "zaber-motion>=7.10.0",
 ]
 
 [dependency-groups]
