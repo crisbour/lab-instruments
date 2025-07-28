@@ -1,6 +1,6 @@
 [project]
 name = "lab-instruments"
-version = "0.4.1"
+version = "0.4.2"
 description = "Control for instruments and sensors in the lab, adding custom API"
 readme = "README.md"
 authors = [
@@ -56,6 +56,10 @@ python_functions = "test_*"
 [tool.hatch.build.targets.wheel]
 packages = ["src/lab-instruments"]
 
+#[build-system]
+#requires = ["setuptools", "wheel"]
+#build-backend = "setuptools.build_meta"
+
 [build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"

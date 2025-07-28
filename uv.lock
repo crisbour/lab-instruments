@@ -211,7 +211,7 @@ wheels = [
 
 [[package]]
 name = "lab-instruments"
-version = "0.4.0"
+version = "0.4.1"
 source = { editable = "." }
 dependencies = [
     { name = "colorlog" },
@@ -238,6 +238,7 @@ dev = [
     { name = "editables" },
     { name = "pytest" },
     { name = "ruff" },
+    { name = "setuptools" },
 ]
 test = [
     { name = "pytest" },
@@ -269,6 +270,7 @@ dev = [
     { name = "editables" },
     { name = "pytest", specifier = ">=8.3.5" },
     { name = "ruff", specifier = ">=0.7.2" },
+    { name = "setuptools" },
 ]
 test = [{ name = "pytest", specifier = ">=8.3.5" }]
 
