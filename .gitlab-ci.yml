@@ -1,0 +1,29 @@
+stages:
+  - build
+  - publish
+
+variables:
+  PYTHON_VERSION: "3.13"
+  UV_VERSION: "0.5.5"
+  UV_PUBLISH_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi"
+  UV_PUBLISH_USERNAME: "gitlab-ci-token"
+  UV_PUBLISH_PASSWORD: "${CI_JOB_TOKEN}"
+
+before_script:
+  - pip install uv==$UV_VERSION
+
+build:
+  stage: build
+  script:
+    - uv build
+  artifacts:
+    paths:
+      - dist/
+
+publish:
+  stage: publish
+  script:
+    - uv publish --publish-url $UV_PUBLISH_URL dist/*
+  #only:
+  #  - tags
+
