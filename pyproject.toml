@@ -61,5 +61,5 @@ packages = ["src/lab-instruments"]
 #build-backend = "setuptools.build_meta"
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "editables"]
 build-backend = "hatchling.build"
