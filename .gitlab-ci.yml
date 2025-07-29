@@ -22,6 +22,8 @@ build:
 
 publish:
   stage: publish
+  tags:
+    - nix
   script:
     - nix --extra-experimental-features "nix-command flakes" develop -c uv publish --publish-url $UV_PUBLISH_URL dist/*
   #only:
