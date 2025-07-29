@@ -37,8 +37,7 @@ dependencies = [
 dev = [
   "ruff>=0.7.2",
   {include-group = "test"},
-  "editables",
-  "setuptools",
+  #"editables",
 ]
 test = ["pytest>=8.3.5"]
 
@@ -56,9 +55,9 @@ python_functions = "test_*"
 [tool.hatch.build.targets.wheel]
 packages = ["src/lab-instruments"]
 
-#[build-system]
-#requires = ["setuptools", "wheel"]
-#build-backend = "setuptools.build_meta"
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
 
 #[build-system]
 #requires = ["hatchling", "editables"]
