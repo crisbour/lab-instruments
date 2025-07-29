@@ -1,6 +1,6 @@
 from zaber_motion import Units
 from zaber_motion.ascii import Connection
-import serial
+import serial.tools.list_ports
 
 from logging import info
 

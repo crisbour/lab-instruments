@@ -1,6 +1,6 @@
 [project]
 name = "lab-instruments"
-version = "0.4.5"
+version = "0.4.9"
 description = "Control for instruments and sensors in the lab, adding custom API"
 readme = "README.md"
 authors = [
@@ -29,15 +29,15 @@ dependencies = [
   "pyvisa-py>=0.8.0",
   "zeroconf>=0.147.0",
   "pyusb>=1.3.1",
-  "serial>=0.0.97",
   "zaber-motion>=7.10.0",
+  "pyserial>=3.5",
 ]
 
 [dependency-groups]
 dev = [
   "ruff>=0.7.2",
   {include-group = "test"},
-  #"editables",
+  "editables",
 ]
 test = ["pytest>=8.3.5"]
 
@@ -55,10 +55,10 @@ python_functions = "test_*"
 [tool.hatch.build.targets.wheel]
 packages = ["src/lab-instruments"]
 
-[build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
-
 #[build-system]
-#requires = ["hatchling", "editables"]
-#build-backend = "hatchling.build"
+#requires = ["setuptools", "wheel"]
+#build-backend = "setuptools.build_meta"
+
+[build-system]
+requires = ["hatchling", "editables"]
+build-backend = "hatchling.build"
