@@ -211,8 +211,8 @@ wheels = [
 
 [[package]]
 name = "lab-instruments"
-version = "0.4.2"
-source = { editable = "." }
+version = "0.4.4"
+source = { virtual = "." }
 dependencies = [
     { name = "colorlog" },
     { name = "editables" },
