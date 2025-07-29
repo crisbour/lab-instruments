@@ -56,10 +56,10 @@ python_functions = "test_*"
 [tool.hatch.build.targets.wheel]
 packages = ["src/lab-instruments"]
 
-#[build-system]
-#requires = ["setuptools", "wheel"]
-#build-backend = "setuptools.build_meta"
-
 [build-system]
-requires = ["hatchling", "editables"]
-build-backend = "hatchling.build"
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+#[build-system]
+#requires = ["hatchling", "editables"]
+#build-backend = "hatchling.build"
