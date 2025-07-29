@@ -1,6 +1,6 @@
 [project]
 name = "lab-instruments"
-version = "0.4.4"
+version = "0.4.5"
 description = "Control for instruments and sensors in the lab, adding custom API"
 readme = "README.md"
 authors = [
