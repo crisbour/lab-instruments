@@ -1,8 +1,8 @@
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.11.3"
+julia_version = "1.11.6"
 manifest_format = "2.0"
-project_hash = "0da0d89f344f3eb9cdd6d1a684a8d6691d727666"
+project_hash = "a88844fb69119d399150be20f48e73c12de84783"
 
 [[deps.AliasTables]]
 deps = ["PtrArrays", "Random"]
@@ -888,7 +888,7 @@ version = "2.5.4+0"
 [[deps.OpenLibm_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "05823500-19ac-5b8b-9628-191a04bc5112"
-version = "0.8.1+2"
+version = "0.8.5+0"
 
 [[deps.OpenMPI_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Hwloc_jll", "JLLWrappers", "LazyArtifacts", "Libdl", "MPIPreferences", "TOML", "Zlib_jll"]
@@ -1145,11 +1145,11 @@ version = "2.11.2"
 
 [[deps.QuantiCam]]
 deps = ["BenchmarkTools", "Dates", "GDAL", "H5Zlz4", "HDF5", "IJulia", "LinearAlgebra", "Logging", "OpalKelly", "PlotlyJS", "Plots", "Printf", "Random", "ResultTypes", "Serde", "StatsBase", "Test", "Todo"]
-git-tree-sha1 = "1d6852ddd765c2a27dc44fe0b7d3e3d9b7ce0dfa"
+git-tree-sha1 = "4226a99650c15558d2cafba467827b2735e1c309"
 repo-rev = "main"
 repo-url = "https://github.com/crisbour/QuantiCam.jl"
 uuid = "42916ebc-e1b0-4bae-bca4-6df6ee911bda"
-version = "0.4.0"
+version = "0.6.0"
 
 [[deps.REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "StyledStrings", "Unicode"]

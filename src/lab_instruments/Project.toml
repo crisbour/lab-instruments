@@ -22,4 +22,4 @@ QuantiCam = {rev = "main", url = "https://github.com/crisbour/QuantiCam.jl"}
 [compat]
 H5Zlz4 = "0.1.1"
 OpalKelly = "1.0.2"
-QuantiCam = "0.4.0"
+QuantiCam = "0.6.0"
