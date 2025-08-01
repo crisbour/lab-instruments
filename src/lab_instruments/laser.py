@@ -199,14 +199,20 @@ class PrimaController:
     flux: float     = 0
     per_mille: int  = 0
 
+    attenuation: dict[PrimaColor, float] = {
+        PrimaColor.RED:   0.0,
+        PrimaColor.GREEN: 0.0,
+        PrimaColor.BLUE:  0.0,
+    } # Attenuation in dB, +ve means less loss than reference
+
     h5_dict = {}
     address = 'eng-7383.hyena-royal.ts.net:50051'
 
     # Make dictionary with max powers for each PrimaColor
     _max_power_dict: Dict[PrimaColor, Optional[float]] = {
-        PrimaColor.BLUE: None,
+        PrimaColor.RED:   None,
         PrimaColor.GREEN: None,
-        PrimaColor.RED: None
+        PrimaColor.BLUE:  None,
     }
 
     def __init__(self, h5_instrument=None, address=None):
@@ -368,6 +374,27 @@ class PrimaController:
         self.stub.PRI_SetWavelengthIdx(wl_req)
         self.write_h5_data('wavelengths_idx', self.wl.get_idx())
 
+    def set_attenuation(self, attenuation: Union[list[float], Dict[PrimaColor, float]]):
+        if isinstance(attenuation, dict):
+            self.attenuation = attenuation
+        elif isinstance(attenuation, list):
+            self.attenuation[PrimaColor.RED] = attenuation[0]
+            self.attenuation[PrimaColor.GREEN] = attenuation[1]
+            self.attenuation[PrimaColor.BLUE] = attenuation[2]
+        else:
+            raise ValueError("Attenuation must be a list of floats or a dictionary with PrimaColor keys.")
+
+    def _convert_to_laser(self, power_flux_val):
+        attenuation_db = self.attenuation[self.wl]
+        attenuation = 10 ** (attenuation_db / 10)  # Convert dB to linear scale
+        return power_flux_val / attenuation
+
+    def _convert_from_laser(self, power_flux_val):
+        attenuation_db = self.attenuation[self.wl]
+        attenuation = 10 ** (attenuation_db / 10)  # Convert dB to linear scale
+        return power_flux_val * attenuation
+
+
     def set_flux(self, flux: float):
         """
         Set the laser flux in photons per second.
@@ -377,14 +404,16 @@ class PrimaController:
         if self.mode == PrimaMode.Off:
             raise ValueError("Laser is off, cannot set flux.")
 
-        self.per_mille, self.power = self.spec.get_per_mille_flux(self.mode, self.wl, flux)
+        flux_corrected = self._convert_to_laser(flux)  # Convert flux to laser power
+
+        self.per_mille, self.power = self.spec.get_per_mille_flux(self.mode, self.wl, flux_corrected)
         self.flux = self.spec.convert_power_to_flux(self.wl, self.power)
 
         self.write_h5_data('photon_flux', self.flux)
         self.write_h5_data('power', self.power)
         self.write_h5_data('per_mille', self.per_mille)
 
-        info(f"Setting laser to {flux} photons/s ({self.power} W) with per mille={self.per_mille}")
+        info(f"Setting laser to {flux} photons/s ({self._convert_from_laser(self.power)} W) with per mille={self.per_mille}")
         wl_req  = api_pb2.WavelengthRequest(pri_req = self.pri_req, wl_idx=self.wl.get_idx())
         self.stub.PRI_SetIntensity(api_pb2.SetIntensityRequest(wl_req = wl_req, intensity=self.per_mille))
 
@@ -396,13 +425,15 @@ class PrimaController:
         """
         if self.mode == PrimaMode.Off:
             raise ValueError("Laser is off, cannot set power.")
-        self.per_mille, self.power = self.spec.get_per_mille_power(self.mode, self.wl, power)
+
+        power_corrected = self._convert_to_laser(power)  # Convert power to laser power
+        self.per_mille, self.power = self.spec.get_per_mille_power(self.mode, self.wl, power_corrected)
         self.flux = self.spec.convert_power_to_flux(self.wl, self.power)
 
         self.write_h5_data('power', self.power)
         self.write_h5_data('per_mille', self.per_mille)
 
-        info(f"Setting laser to {self.power}≈{power} W with per mille={self.per_mille}")
+        info(f"Setting laser to {self._convert_from_laser(self.power)}≈{power} W with per mille={self.per_mille}")
         wl_req  = api_pb2.WavelengthRequest(pri_req = self.pri_req, wl_idx=self.wl.get_idx())
         self.stub.PRI_SetIntensity(api_pb2.SetIntensityRequest(wl_req = wl_req, intensity=self.per_mille))
 
