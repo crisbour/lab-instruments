@@ -159,7 +159,7 @@ class PrimaSpecs:
         x_sorted = np.sort(x.flatten())
         median_x = x_sorted[len(x_sorted) // 2]
         power = y_values[median_x]
-        info(f"Error between {desired_power} and {power} for per_mille={median_x} is {abs(desired_power - power)}")
+        debug(f"Error between {desired_power} and {power} for per_mille={median_x} is {abs(desired_power - power)}")
         return (median_x, power)
 
     def get_per_mille_flux(self, mode: Union[str, PrimaMode], color: Union[str, PrimaColor], desired_flux: float) -> tuple[int, float]:
@@ -167,7 +167,7 @@ class PrimaSpecs:
         if isinstance(color, str):
             color = PrimaColor[color]
         desired_power = self.convert_flux_to_power(color, desired_flux) # W
-        info(f"Desired flux: {desired_flux} photons/s, Desired power: {desired_power} W")
+        debug(f"Desired flux: {desired_flux} photons/s, Desired power: {desired_power} W")
         return self.get_per_mille_power(mode, color, desired_power)
 
     def get_frequency(self, color: PrimaColor) -> float:
@@ -413,7 +413,7 @@ class PrimaController:
         self.write_h5_data('power', self.power)
         self.write_h5_data('per_mille', self.per_mille)
 
-        info(f"Setting laser to {flux} photons/s ({self._convert_from_laser(self.power)} W) with per mille={self.per_mille}")
+        debug(f"Setting laser to {flux} photons/s ({self._convert_from_laser(self.power)} W) with per mille={self.per_mille}")
         wl_req  = api_pb2.WavelengthRequest(pri_req = self.pri_req, wl_idx=self.wl.get_idx())
         self.stub.PRI_SetIntensity(api_pb2.SetIntensityRequest(wl_req = wl_req, intensity=self.per_mille))
 
@@ -433,7 +433,7 @@ class PrimaController:
         self.write_h5_data('power', self.power)
         self.write_h5_data('per_mille', self.per_mille)
 
-        info(f"Setting laser to {self._convert_from_laser(self.power)}≈{power} W with per mille={self.per_mille}")
+        debug(f"Setting laser to {self._convert_from_laser(self.power)}≈{power} W with per mille={self.per_mille}")
         wl_req  = api_pb2.WavelengthRequest(pri_req = self.pri_req, wl_idx=self.wl.get_idx())
         self.stub.PRI_SetIntensity(api_pb2.SetIntensityRequest(wl_req = wl_req, intensity=self.per_mille))
 
