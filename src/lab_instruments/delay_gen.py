@@ -335,7 +335,7 @@ class ErrorCode(Enum):
 
 class DG645:
 
-    def __init__(self, h5_instrument=None, rm=None, ip=None, port=None, trig_lvl=1.3):
+    def __init__(self, h5_instrument=None, rm=None, ip=None, port=None, trig_lvl=1.0, trig_edge=TriggerSource.ExternalFalling):
         if ip is None:
             ip = "192.168.88.110"
             warning(f"No IP provided, using default {ip}")
@@ -354,7 +354,7 @@ class DG645:
             read_termination='\r\n')
         idn = self.delay_gen.query('*IDN?')
         info(f"Delay generator initialized at {ip}:{port} is: {idn}")
-        self.init_dg645(trig_lvl)
+        self.init_dg645(trig_lvl, trig_edge)
         self.h5_instrument = h5_instrument
         if self.h5_instrument is not None:
             self.hdf5_describe(self.h5_instrument)
@@ -379,13 +379,13 @@ class DG645:
             err = self.get_error()
         return any_error
 
-    def init_dg645(self, trig_lvl):
+    def init_dg645(self, trig_lvl, trig_edge):
         self.delay_gen.write('*RST')  # Reset the delay generator
         self.delay_gen.write('*CLS')  # Clear the delay generator
         self.read_errors()
         self.delay_gen.write(f'TLVL {round(trig_lvl, 1)}') # set trig level with only one decimal place
         self.read_errors()
-        self.delay_gen.write(f'TSRC {TriggerSource.ExternalFalling.value}')  # Set trigger slope to positive
+        self.delay_gen.write(f'TSRC {trig_edge.value}')  # Set trigger slope to positive
         self.delay_gen.write(f'DLAY {DelayChannel.A.value},{DelayChannel.T0.value},0') # Set A = T0 + 0
         self.read_errors()
         # NOTE: Setting 20ns A->B in here to give us enough margin to not hit the next trigger
