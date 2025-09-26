@@ -2,7 +2,7 @@
 
 julia_version = "1.11.6"
 manifest_format = "2.0"
-project_hash = "8220aa59174dbdf3e2f34b99b7cebdc2d914eafb"
+project_hash = "0244e8baef4eed637067615470648ab40ba30bb9"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -1605,11 +1605,11 @@ version = "2.11.2"
 
 [[deps.QuantiCam]]
 deps = ["BenchmarkTools", "DataStructures", "Dates", "GLMakie", "H5Zlz4", "HDF5", "IJulia", "LinearAlgebra", "Logging", "OpalKelly", "Printf", "Random", "Requires", "ResultTypes", "Serde", "StatsBase", "ThreadsX"]
-git-tree-sha1 = "50ab7fa92f1a8bd9ddbfdd51288b43d1e9ef80c8"
+git-tree-sha1 = "dd9b02f59bed98db5fb603d880a24a6ce8ef886d"
 repo-rev = "main"
 repo-url = "https://github.com/crisbour/QuantiCam.jl"
 uuid = "42916ebc-e1b0-4bae-bca4-6df6ee911bda"
-version = "0.8.1"
+version = "0.9.0"
 
 [[deps.REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "StyledStrings", "Unicode"]
