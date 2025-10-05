@@ -31,6 +31,7 @@ dependencies = [
   "pyusb>=1.3.1",
   "zaber-motion>=7.10.0",
   "pyserial>=3.5",
+  "libusb1>=3.3.1",
 ]
 
 [dependency-groups]
