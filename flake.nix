@@ -157,6 +157,7 @@
               pkgs.uv
               pkgs.julia-bin
               pkgs.udev
+              pkgs.twine
             ];
 
             env = {
