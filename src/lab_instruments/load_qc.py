@@ -23,10 +23,10 @@ julia_toml_path = files("lab_instruments")
 # Set JULIA_PROJECT environment variable
 os.environ["JULIA_PROJECT"] = str(julia_toml_path)
 
-print("JULIIA_PROJECT set to:", os.environ["JULIA_PROJECT"])
+print("JULIA_PROJECT set to:", os.environ["JULIA_PROJECT"])
 
 os.environ["PYTHON_JULIAPKG_PROJECT"] = os.path.abspath("./julia_env")
-from juliacall import Main as jl, convert as jlconvert
+from juliacall import Main as jl
 
 # Run Pkg.instantiate() and Pkg.resolve()
 jl.seval(f'using Pkg; Pkg.activate("{julia_toml_path}")')
@@ -36,3 +36,5 @@ jl.seval("Pkg.instantiate()")
 
 jl.seval('using QuantiCam')
 jl.seval('using Serde')
+
+__all__ = ["jl"]

@@ -7,6 +7,8 @@
 # (different amplitude correction modes handled by the ThorSpectra
 # software, firmware upload for re-enumeration)
 
+# Resourced from: https://github.com/ElTinmar/ThorPy
+
 
 from dataclasses import dataclass, field
 import array
@@ -18,6 +20,7 @@ import math
 from typing import Optional, Tuple, NamedTuple, Dict, List
 import numpy as np
 from pathlib import Path
+from importlib.resources import files, as_file
 
 import sys
 if sys.platform == 'win32':
@@ -34,85 +37,85 @@ class NoUserDataPoint(Exception): ...
 class RenumerationFailed(Exception): ...
 
 THORLABS_VID = 0x1313
-PID_RANGE = (0x8080, 0x8089)
+PID_RANGE    = (0x8080, 0x8089)
 CCS100_PID_U = 0x8080  # CCS100 Compact Spectrometer
-CCS100_PID = 0x8081  # CCS100 Compact Spectrometer
+CCS100_PID   = 0x8081  # CCS100 Compact Spectrometer
 CCS125_PID_U = 0x8082  # CCS125 Special Spectrometer
-CCS125_PID = 0x8083  # CCS125 Special Spectrometer
+CCS125_PID   = 0x8083  # CCS125 Special Spectrometer
 CCS150_PID_U = 0x8084  # CCS150 UV Spectrometer
-CCS150_PID = 0x8085  # CCS150 UV Spectrometer
+CCS150_PID   = 0x8085  # CCS150 UV Spectrometer
 CCS175_PID_U = 0x8086  # CCS175 NIR Spectrometer
-CCS175_PID = 0x8087  # CCS175 NIR Spectrometer
+CCS175_PID   = 0x8087  # CCS175 NIR Spectrometer
 CCS200_PID_U = 0x8088  # CCS200 UV-NIR Spectrometer
-CCS200_PID = 0x8089  # CCS200 UV-NIR Spectrometer
+CCS200_PID   = 0x8089  # CCS200 UV-NIR Spectrometer
 DEFAULT_RENUMERATION_TIMEOUT = 10.0
 
-TLCCS_SERIAL_NO_LENGTH = 24
-TLCCS_MAX_USER_NAME_SIZE = 32
-TLCCS_NUM_POLY_POINTS = 4
-TLCCS_NUM_PIXELS = 3648
-TLCCS_NUM_FLAG_WORDS = 1
-TLCCS_NUM_CHECKSUMS = 2
-TLCCS_MAX_NUM_USR_ADJ = 10
-TLCCS_AMP_CORR_FACT_MIN = 0.001
-TLCCS_AMP_CORR_FACT_MAX = 1000.0
-ENDPOINT_0_TRANSFERSIZE = 64
-TLCCS_TIMEOUT_DEF = 2000
-TLCCS_CAL_MODE_USER = 0
+TLCCS_SERIAL_NO_LENGTH     = 24
+TLCCS_MAX_USER_NAME_SIZE   = 32
+TLCCS_NUM_POLY_POINTS      = 4
+TLCCS_NUM_PIXELS           = 3648
+TLCCS_NUM_FLAG_WORDS       = 1
+TLCCS_NUM_CHECKSUMS        = 2
+TLCCS_MAX_NUM_USR_ADJ      = 10
+TLCCS_AMP_CORR_FACT_MIN    = 0.001
+TLCCS_AMP_CORR_FACT_MAX    = 1000.0
+ENDPOINT_0_TRANSFERSIZE    = 64
+TLCCS_TIMEOUT_DEF          = 2000
+TLCCS_CAL_MODE_USER        = 0
 TLCCS_CAL_DATA_SET_FACTORY = 0
-TLCCS_CAL_DATA_SET_USER = 1
-TLCCS_MIN_INT_TIME = 1e-5
-TLCCS_MAX_INT_TIME = 60
-TLCCS_DEF_INT_TIME = 0.01
-TLCCS_NUM_RAW_PIXELS = 3694
-SH_PERCENT = 16.5
+TLCCS_CAL_DATA_SET_USER    = 1
+TLCCS_MIN_INT_TIME         = 1e-5
+TLCCS_MAX_INT_TIME         = 60
+TLCCS_DEF_INT_TIME         = 0.01
+TLCCS_NUM_RAW_PIXELS       = 3694
+SH_PERCENT                 = 16.5
 TLCCS_NUM_INTEG_CTRL_BYTES = 6
 
-TLCCS_RCMD_READ_EEPROM = 0x21
-TLCCS_RCMD_READ_RAM = 0xA0
-TLCCS_RCMD_GET_STATUS = 0x30
+TLCCS_RCMD_READ_EEPROM      = 0x21
+TLCCS_RCMD_READ_RAM         = 0xA0
+TLCCS_RCMD_GET_STATUS       = 0x30
 TLCCS_WCMD_INTEGRATION_TIME = 0x23
-TLCCS_WCMD_MODUS = 0x24
-TLCCS_WCMD_RESET = 0x26
-CONTROL_TRANSFER_IN_ZERO = 0xC0
+TLCCS_WCMD_MODUS            = 0x24
+TLCCS_WCMD_RESET            = 0x26
+CONTROL_TRANSFER_IN_ZERO    = 0xC0
 
-TLCCS_STATUS_SCAN_IDLE = 0x0002 # CCS waits for new scan to execute
-TLCCS_STATUS_SCAN_TRIGGERED = 0x0004 # scan in progress
-TLCCS_STATUS_SCAN_START_TRANS = 0x0008 # scan starting
-TLCCS_STATUS_SCAN_TRANSFER = 0x0010 # scan is done, waiting for data transfer to PC
+TLCCS_STATUS_SCAN_IDLE         = 0x0002 # CCS waits for new scan to execute
+TLCCS_STATUS_SCAN_TRIGGERED    = 0x0004 # scan in progress
+TLCCS_STATUS_SCAN_START_TRANS  = 0x0008 # scan starting
+TLCCS_STATUS_SCAN_TRANSFER     = 0x0010 # scan is done, waiting for data transfer to PC
 TLCCS_STATUS_WAIT_FOR_EXT_TRIG = 0x0080 # same as IDLE except that external trigger is armed
 
-NO_DARK_PIXELS = 12 # we got 12 dark pixels
-DARK_PIXELS_OFFSET = 16 # dark pixels start at positon 16 within raw data
-SCAN_PIXELS_OFFSET = 32 # real measurement start at position 32 within raw data
-MAX_ADC_VALUE = 0xFFFF # this is full scale of a 16bit Analog Digital Converter (ADC)
-DARK_LEVEL_THRESHOLD = 0.99 # when dark level is above 99% f.s. of ADC mark scan as invalid (overexposed)
+NO_DARK_PIXELS           = 12 # we got 12 dark pixels
+DARK_PIXELS_OFFSET       = 16 # dark pixels start at positon 16 within raw data
+SCAN_PIXELS_OFFSET       = 32 # real measurement start at position 32 within raw data
+MAX_ADC_VALUE            = 0xFFFF # this is full scale of a 16bit Analog Digital Converter (ADC)
+DARK_LEVEL_THRESHOLD     = 0.99 # when dark level is above 99% f.s. of ADC mark scan as invalid (overexposed)
 DARK_LEVEL_THRESHOLD_ADC = DARK_LEVEL_THRESHOLD * MAX_ADC_VALUE
 
 MODUS_INTERN_SINGLE_SHOT = 0
-MODUS_INTERN_CONTINUOUS = 1
+MODUS_INTERN_CONTINUOUS  = 1
 MODUS_EXTERN_SINGLE_SHOT = 2
-MODUS_EXTERN_CONTINUOUS = 3
+MODUS_EXTERN_CONTINUOUS  = 3
 
-CHAR_SZ = 1
+CHAR_SZ   = 1
 REAL64_SZ = 8
 REAL32_SZ = 4
-INT32_SZ = 4
+INT32_SZ  = 4
 UINT32_SZ = 4
 UINT16_SZ = 2
-INT16_SZ = 2
-UINT8_SZ = 1
+INT16_SZ  = 2
+UINT8_SZ  = 1
 
 #===========================================================================
 #   On-chip RAM mapping
 #===========================================================================
 
 RAM_PROGRAM_START = 0x0000 # main  RAM (program + data)
-RAM_PROGRAM_SIZE = 0X4000
-RAM_DATA_START = 0xE000 # scratch RAM (data only)
-RAM_DATA_SIZE = 0x0200
+RAM_PROGRAM_SIZE  = 0X4000
+RAM_DATA_START    = 0xE000 # scratch RAM (data only)
+RAM_DATA_SIZE     = 0x0200
 RAM_BUFFERS_START = 0xE200 # endpoint buffers and control/status registers
-RAM_BUFFERS_SIZE = 0x1E00
+RAM_BUFFERS_SIZE  = 0x1E00
 
 #===========================================================================
 #   EEPROM mapping: 32kB EEPROM
@@ -174,65 +177,65 @@ EE_FREE                           = EE_CHECKSUMS              + EE_SIZE_CHECKSUM
 
 @dataclass
 class TLCCS_WL_CAL:
-    poly: array.array = field(default_factory=lambda: array.array('d', [0]*TLCCS_NUM_POLY_POINTS))
-    min: float = 0
-    max: float = 0
-    wl: array.array = field(default_factory=lambda: array.array('d', [0]*TLCCS_NUM_PIXELS))
+    poly:  array.array = field(default_factory=lambda: array.array('d', [0]*TLCCS_NUM_POLY_POINTS))
+    min:   float = 0
+    max:   float = 0
+    wl:    array.array = field(default_factory=lambda: array.array('d', [0]*TLCCS_NUM_PIXELS))
     valid: int = 0
 
 @dataclass
 class TLCCS_USER_CAL_PTS:
-    user_cal_node_cnt: int = 0
+    user_cal_node_cnt:   int = 0
     user_cal_node_pixel: array.array = field(default_factory=lambda: array.array('L', [0]*TLCCS_MAX_NUM_USR_ADJ))
-    user_cal_node_wl: array.array = field(default_factory=lambda: array.array('d', [0]*TLCCS_MAX_NUM_USR_ADJ))
+    user_cal_node_wl:    array.array = field(default_factory=lambda: array.array('d', [0]*TLCCS_MAX_NUM_USR_ADJ))
 
 @dataclass
 class TLCCS_ACOR:
     amplitude_cor: array.array = field(default_factory=lambda: array.array('f', [1.0]*TLCCS_NUM_PIXELS))
-    checksum: int = 0
+    checksum:      int = 0
 
 @dataclass
 class TLCCS_VERSION:
-    major: int = 0
-    minor: int = 0
+    major:    int = 0
+    minor:    int = 0
     subminor: int = 0
 
 @dataclass
 class TLCCS_DATA:
 
     # common data
-    err_query: bool = False
-    timeout: int = 0
-    pid: int = 0x0000
-    vid: int = 0x0000
+    err_query:              bool  = False
+    timeout:                int   = 0
+    pid:                    int   = 0x0000
+    vid:                    int   = 0x0000
 
     # device settings
-    int_time: float = 0.01
-    even_offset_max: int = 1
-    odd_offset_max: int = 1
+    int_time:               float = 0.01
+    even_offset_max:        int   = 1
+    odd_offset_max:         int   = 1
 
     # device calibration
-    factory_wavelength_cal: TLCCS_WL_CAL = field(default_factory=TLCCS_WL_CAL)
-    user_wavelength_cal: TLCCS_WL_CAL = field(default_factory=TLCCS_WL_CAL)
-    user_points: TLCCS_USER_CAL_PTS = field(default_factory=TLCCS_USER_CAL_PTS)
+    factory_wavelength_cal: TLCCS_WL_CAL       = field(default_factory = TLCCS_WL_CAL)
+    user_wavelength_cal:    TLCCS_WL_CAL       = field(default_factory = TLCCS_WL_CAL)
+    user_points:            TLCCS_USER_CAL_PTS = field(default_factory = TLCCS_USER_CAL_PTS)
 
-    factory_amplitude_cal: TLCCS_ACOR = field(default_factory=TLCCS_ACOR)
-    user_amplitude_cal: TLCCS_ACOR = field(default_factory=TLCCS_ACOR)
-    cal_mode: int = 0
+    factory_amplitude_cal:  TLCCS_ACOR = field(default_factory=TLCCS_ACOR)
+    user_amplitude_cal:     TLCCS_ACOR = field(default_factory=TLCCS_ACOR)
+    cal_mode:               int = 0
 
     # version
-    firmware_version: TLCCS_VERSION = field(default_factory=TLCCS_VERSION)
-    hardware_version: TLCCS_VERSION = field(default_factory=TLCCS_VERSION)
+    firmware_version:       TLCCS_VERSION = field(default_factory=TLCCS_VERSION)
+    hardware_version:       TLCCS_VERSION = field(default_factory=TLCCS_VERSION)
 
 
 def read_EEPROM_wo_CRC(
-        dev: usb.core.Device,
+        dev:     usb.core.Device,
         address: int,
-        idx: int,
-        length: int
+        idx:     int,
+        length:  int
     ) -> array.array:
 
-    data = array.array('B')
+    data          = array.array('B')
     chunk_address = address
 
     while (length > 0):
@@ -243,25 +246,25 @@ def read_EEPROM_wo_CRC(
             chunk_length = length
 
         chunk = dev.ctrl_transfer(
-            bmRequestType = CONTROL_TRANSFER_IN_ZERO,
-            bRequest = TLCCS_RCMD_READ_EEPROM,
-            wValue = chunk_address,
-            wIndex = idx,
+            bmRequestType   = CONTROL_TRANSFER_IN_ZERO,
+            bRequest        = TLCCS_RCMD_READ_EEPROM,
+            wValue          = chunk_address,
+            wIndex          = idx,
             data_or_wLength = chunk_length
         )
         data.extend(chunk)
 
-        length -= len(chunk)
+        length        -= len(chunk)
         chunk_address += len(chunk)
 
     return data
 
 
 def read_EEPROM(
-        dev: usb.core.Device,
+        dev:     usb.core.Device,
         address: int,
-        idx: int,
-        length: int
+        idx:     int,
+        length:  int
     ) -> array.array:
 
     data = read_EEPROM_wo_CRC(dev, address, idx, length)
@@ -281,13 +284,13 @@ def read_EEPROM(
     return data
 
 def read_RAM(
-        dev: usb.core.Device,
+        dev:     usb.core.Device,
         address: int,
-        idx: int,
-        length: int
+        idx:     int,
+        length:  int
     ) -> array.array:
 
-    data = array.array('B')
+    data          = array.array('B')
     chunk_address = address
 
     while (length > 0):
@@ -306,7 +309,7 @@ def read_RAM(
         )
         data.extend(chunk)
 
-        length -= len(chunk)
+        length        -= len(chunk)
         chunk_address += len(chunk)
 
     return data
@@ -317,8 +320,8 @@ def crc16_block(data: array.array, length: int) -> int:
     cnt: int = 0
 
     while length:
-        crc = crc16_update(crc, data[cnt])
-        cnt += 1
+        crc     = crc16_update(crc, data[cnt])
+        cnt    += 1
         length -= 1
 
     return crc
@@ -338,9 +341,9 @@ def crc16_update(crc, d: int) -> int:
 
 def initialize(dev: usb.core.Device, data: TLCCS_DATA) -> None:
 
-    data.pid = dev.idProduct
-    data.vid = dev.idVendor
-    data.timeout = TLCCS_TIMEOUT_DEF
+    data.pid      = dev.idProduct
+    data.vid      = dev.idVendor
+    data.timeout  = TLCCS_TIMEOUT_DEF
     data.cal_mode = TLCCS_CAL_MODE_USER
 
     set_integration_time(dev, TLCCS_DEF_INT_TIME)
@@ -353,42 +356,42 @@ def initialize(dev: usb.core.Device, data: TLCCS_DATA) -> None:
 def start_single_scan(dev: usb.core.Device):
 
     dev.ctrl_transfer(
-        bmRequestType=0x40,
-        bRequest=TLCCS_WCMD_MODUS,
-        wValue=MODUS_INTERN_SINGLE_SHOT,
-        wIndex=0x0000,
-        data_or_wLength=0
+        bmRequestType   = 0x40,
+        bRequest        = TLCCS_WCMD_MODUS,
+        wValue          = MODUS_INTERN_SINGLE_SHOT,
+        wIndex          = 0x0000,
+        data_or_wLength = 0
     )
 
 def start_continuous_scan(dev: usb.core.Device):
 
     dev.ctrl_transfer(
-        bmRequestType=0x40,
-        bRequest=TLCCS_WCMD_MODUS,
-        wValue=MODUS_INTERN_CONTINUOUS,
-        wIndex=0x0000,
-        data_or_wLength=0
+        bmRequestType   = 0x40,
+        bRequest        = TLCCS_WCMD_MODUS,
+        wValue          = MODUS_INTERN_CONTINUOUS,
+        wIndex          = 0x0000,
+        data_or_wLength = 0
     )
 
 def get_device_status(dev: usb.core.Device) -> int:
 
     status_bytes = dev.ctrl_transfer(
-        bmRequestType=0xC0,
-        bRequest=TLCCS_RCMD_GET_STATUS,
-        wValue=0x0000,
-        wIndex=0x0000,
-        data_or_wLength=UINT16_SZ
+        bmRequestType   = 0xC0,
+        bRequest        = TLCCS_RCMD_GET_STATUS,
+        wValue          = 0x0000,
+        wIndex          = 0x0000,
+        data_or_wLength = UINT16_SZ
     )
     status = struct.unpack('<H', status_bytes)[0]
     return status
 
 def get_scan_data(
-        dev: usb.core.Device,
+        dev:  usb.core.Device,
         data: TLCCS_DATA
     ) -> array.array:
 
-    raw_scan_bytes = dev.read(0x86, TLCCS_NUM_RAW_PIXELS*UINT16_SZ)
-    raw_scan_data = struct.unpack('<' + 'H'*(len(raw_scan_bytes)//2), raw_scan_bytes)
+    raw_scan_bytes      = dev.read(0x86, TLCCS_NUM_RAW_PIXELS*UINT16_SZ)
+    raw_scan_data       = struct.unpack('<' + 'H'*(len(raw_scan_bytes)//2), raw_scan_bytes)
     processed_scan_data = array.array('d', [0]*TLCCS_NUM_PIXELS)
 
     # dark current average
@@ -408,7 +411,7 @@ def get_scan_data(
     return processed_scan_data
 
 def get_scan_data_factory(
-        dev: usb.core.Device,
+        dev:  usb.core.Device,
         data: TLCCS_DATA
     ) -> array.array:
 
@@ -486,9 +489,9 @@ def find_centered_range(arr: array.array, center: int, threshold: float) -> Tupl
     return left, right, min_val, max_val
 
 def get_scan_data_corrected_noise(
-        dev: usb.core.Device,
-        data: TLCCS_DATA,
-        center_wl: float,
+        dev:                    usb.core.Device,
+        data:                   TLCCS_DATA,
+        center_wl:              float,
         noise_amplification_dB: float
     ) -> Tuple[array.array, float, float]:
 
@@ -496,11 +499,11 @@ def get_scan_data_corrected_noise(
     idx_center: int = next((i for i, val in enumerate(data.factory_wavelength_cal.wl) if val >= center_wl))
 
     idx_left, idx_right, min_correction, max_correction = find_centered_range(
-        arr = data.user_amplitude_cal.amplitude_cor,
-        center = idx_center,
+        arr       = data.user_amplitude_cal.amplitude_cor,
+        center    = idx_center,
         threshold = noise_multiplier
     )
-    wavelength_left = data.factory_wavelength_cal.wl[idx_left]
+    wavelength_left  = data.factory_wavelength_cal.wl[idx_left]
     wavelength_right = data.factory_wavelength_cal.wl[idx_right]
 
     scan_data = get_scan_data(dev, data)
@@ -515,10 +518,10 @@ def set_integration_time(dev: usb.core.Device, time: float):
 
     time_data = encode_integration_time(time)
     dev.ctrl_transfer(
-        bmRequestType = 0x40,
-        bRequest = TLCCS_WCMD_INTEGRATION_TIME,
-        wValue = 0x0000,
-        wIndex = 0x0000,
+        bmRequestType   = 0x40,
+        bRequest        = TLCCS_WCMD_INTEGRATION_TIME,
+        wValue          = 0x0000,
+        wIndex          = 0x0000,
         data_or_wLength = time_data
     )
 
@@ -526,10 +529,10 @@ def set_integration_time(dev: usb.core.Device, time: float):
 def get_integration_time(dev: usb.core.Device) -> float:
 
     time_bytes = dev.ctrl_transfer(
-        bmRequestType = 0xC0,
-        bRequest = TLCCS_WCMD_INTEGRATION_TIME,
-        wValue = 0x0000,
-        wIndex = 0x0000,
+        bmRequestType   = 0xC0,
+        bRequest        = TLCCS_WCMD_INTEGRATION_TIME,
+        wValue          = 0x0000,
+        wIndex          = 0x0000,
         data_or_wLength = TLCCS_NUM_INTEG_CTRL_BYTES*UINT8_SZ
     )
     return decode_integration_time(time_bytes)
@@ -592,30 +595,30 @@ def get_dark_current_offset(dev: usb.core.Device, data: TLCCS_DATA)  -> None:
 def get_firmware_revision(dev: usb.core.Device, firmware_version: TLCCS_VERSION) -> None:
     # TODO
 
-    firmware_version.major = 0
-    firmware_version.minor = 0
+    firmware_version.major    = 0
+    firmware_version.minor    = 0
     firmware_version.subminor = 0
 
 
 def get_hardware_revision(dev: usb.core.Device, hardware_version: TLCCS_VERSION) -> None:
     #TODO
 
-    hardware_version.major = 0
-    hardware_version.minor = 0
+    hardware_version.major    = 0
+    hardware_version.minor    = 0
     hardware_version.subminor = 0
 
 
 def get_amplitude_correction_array(
-        dev: usb.core.Device,
+        dev:               usb.core.Device,
         amplitude_cor_cal: TLCCS_ACOR,
-        address: int
+        address:           int
     ) -> None:
 
     amplitude_cor_bytes = read_EEPROM(
         dev,
         address = address,
-        idx = 0,
-        length = EE_LENGTH_ACOR
+        idx     = 0,
+        length  = EE_LENGTH_ACOR
     )
     amplitude_cor_data = struct.unpack('<' + 'f'*TLCCS_NUM_PIXELS , amplitude_cor_bytes)
     for i, a in enumerate(amplitude_cor_data):
@@ -640,8 +643,8 @@ def read_factory_poly(dev: usb.core.Device, poly: array.array) -> None:
     data = read_EEPROM(
         dev,
         address = EE_FACT_CAL_COEF_DATA,
-        idx = 0,
-        length = EE_LENGTH_FACT_CAL_COEF_DATA
+        idx     = 0,
+        length  = EE_LENGTH_FACT_CAL_COEF_DATA
     )
     poly_coeff = struct.unpack('<' + 'd'*TLCCS_NUM_POLY_POINTS, data)
     for i, coeff in enumerate(poly_coeff):
@@ -652,8 +655,8 @@ def read_user_points(dev: usb.core.Device, user_points: TLCCS_USER_CAL_PTS) -> N
     point_count = read_EEPROM(
         dev,
         address = EE_USER_CAL_POINTS_CNT,
-        idx = 0,
-        length = EE_LENGTH_USER_CAL_POINTS_CNT
+        idx     = 0,
+        length  = EE_LENGTH_USER_CAL_POINTS_CNT
     )
     cnt = struct.unpack('<H', point_count)[0]
 
@@ -663,8 +666,8 @@ def read_user_points(dev: usb.core.Device, user_points: TLCCS_USER_CAL_PTS) -> N
     point_data = read_EEPROM(
         dev,
         address = EE_USER_CAL_POINTS_DATA,
-        idx = 0,
-        length = EE_LENGTH_USER_CAL_POINTS_DATA
+        idx     = 0,
+        length  = EE_LENGTH_USER_CAL_POINTS_DATA
     )
 
     user_points.user_cal_node_cnt = cnt
@@ -794,10 +797,10 @@ def parse_spt(filename):
 
         # Extract fields based on known mapping
         bRequest = block[16]
-        wValue = struct.unpack_from("<H", block, 18)[0]
-        wIndex = struct.unpack_from("<H", block, 20)[0]
-        wLength = struct.unpack_from("<H", block, 28)[0]
-        payload = block[32:32+wLength]
+        wValue   = struct.unpack_from("<H", block, 18)[0]
+        wIndex   = struct.unpack_from("<H", block, 20)[0]
+        wLength  = struct.unpack_from("<H", block, 28)[0]
+        payload  = block[32:32+wLength]
 
         record = {
             "bRequest": bRequest,
@@ -841,21 +844,21 @@ def dump_eeprom(dev: usb.core.Device) -> array.array:
 def hold_cpu(dev: usb.core.Device) -> None:
 
     dev.ctrl_transfer(
-        bmRequestType=0x40,
-        bRequest=0XA0,
-        wValue=0xE600,
-        wIndex=0x0000,
-        data_or_wLength=[0x01]
+        bmRequestType   = 0x40,
+        bRequest        = 0XA0,
+        wValue          = 0xE600,
+        wIndex          = 0x0000,
+        data_or_wLength = [0x01]
     )
 
 def release_cpu(dev: usb.core.Device) -> None:
 
     dev.ctrl_transfer(
-        bmRequestType=0x40,
-        bRequest=0XA0,
-        wValue=0xE600,
-        wIndex=0x0000,
-        data_or_wLength=[0x00]
+        bmRequestType   = 0x40,
+        bRequest        = 0XA0,
+        wValue          = 0xE600,
+        wIndex          = 0x0000,
+        data_or_wLength = [0x00]
     )
 
 def dump_ram(dev: usb.core.Device) -> Tuple[array.array, array.array]:
@@ -865,15 +868,15 @@ def dump_ram(dev: usb.core.Device) -> Tuple[array.array, array.array]:
     program = read_RAM(
         dev,
         address = RAM_PROGRAM_START,
-        idx = 0x0000,
-        length = RAM_PROGRAM_SIZE
+        idx     = 0x0000,
+        length  = RAM_PROGRAM_SIZE
     )
 
     data = read_RAM(
         dev,
         address = RAM_DATA_START,
-        idx = 0x0000,
-        length = RAM_DATA_SIZE
+        idx     = 0x0000,
+        length  = RAM_DATA_SIZE
     )
 
     release_cpu(dev)
@@ -883,19 +886,19 @@ def dump_ram(dev: usb.core.Device) -> Tuple[array.array, array.array]:
 def reset_device(dev: usb.core.Device):
 
     dev.ctrl_transfer(
-        bmRequestType = 0x40,
-        bRequest = TLCCS_WCMD_RESET,
-        wValue = 0x0000,
-        wIndex = 0x0000,
+        bmRequestType   = 0x40,
+        bRequest        = TLCCS_WCMD_RESET,
+        wValue          = 0x0000,
+        wIndex          = 0x0000,
         data_or_wLength = 0
     )
 
 
 def wait_for_device(
-        idVendor: int,
-        idProduct: int,
+        idVendor:     int,
+        idProduct:    int,
         port_numbers: Tuple,
-        timeout: float = DEFAULT_RENUMERATION_TIMEOUT
+        timeout:      float = DEFAULT_RENUMERATION_TIMEOUT
     ) -> usb.core.Device:
 
     start = time.time()
@@ -915,15 +918,15 @@ def wait_for_device(
 
 
 def renumerate(
-        PID: int,
-        port_numbers: Tuple,
+        PID:           int,
+        port_numbers:  Tuple,
         firmware_file: str
     ) -> usb.core.Device:
 
     dev = usb.core.find(
-        idVendor = THORLABS_VID,
-        idProduct = PID,
-        backend = libusb_backend,
+        idVendor     = THORLABS_VID,
+        idProduct    = PID,
+        backend      = libusb_backend,
         custom_match = lambda d: d.port_numbers == port_numbers
     )
 
@@ -943,12 +946,13 @@ def renumerate(
 
 
 class DevInfo(NamedTuple):
-    vid: int
-    pid: int
+    vid:           int
+    pid:           int
     serial_number: str
 
 
-DEFAULT_FIRMWARE_PATH = Path('ccs_firmware')
+#DEFAULT_FIRMWARE_PATH = Path(files("lab_instruments").joinpath('ccs_firmware'))
+DEFAULT_FIRMWARE_PATH = Path(__file__).parent / 'ccs_firmware'
 DEFAULT_FIRMWARE_FILE = {
     CCS100_PID_U: DEFAULT_FIRMWARE_PATH / 'CCS100.spt',
     CCS125_PID_U: DEFAULT_FIRMWARE_PATH / 'CCS125.spt',
@@ -961,10 +965,10 @@ def list_spectrometers(pid_firmware_map: Dict[int, Path] = DEFAULT_FIRMWARE_FILE
     '''list spectrometers in the CCS family. Uploads firmware if necessary'''
 
     devices = usb.core.find(
-        idVendor = THORLABS_VID,
-        backend = libusb_backend,
+        idVendor     = THORLABS_VID,
+        backend      = libusb_backend,
         custom_match = lambda d: d.idProduct in range(*PID_RANGE),
-        find_all = True
+        find_all     = True
     )
 
     res = []
@@ -973,8 +977,8 @@ def list_spectrometers(pid_firmware_map: Dict[int, Path] = DEFAULT_FIRMWARE_FILE
         # device already initialized
         if dev.idProduct & 1:
             res.append(DevInfo(
-                vid = dev.idVendor,
-                pid = dev.idProduct,
+                vid           = dev.idVendor,
+                pid           = dev.idProduct,
                 serial_number = dev.serial_number
             ))
 
@@ -982,13 +986,13 @@ def list_spectrometers(pid_firmware_map: Dict[int, Path] = DEFAULT_FIRMWARE_FILE
         else:
             port_numbers = dev.port_numbers
             new_dev = renumerate(
-                PID = dev.idProduct,
+                PID           = dev.idProduct,
                 firmware_file = pid_firmware_map[dev.idProduct],
-                port_numbers = port_numbers
+                port_numbers  = port_numbers
                 )
             res.append(DevInfo(
-                vid = new_dev.idVendor,
-                pid = new_dev.idProduct,
+                vid           = new_dev.idVendor,
+                pid           = new_dev.idProduct,
                 serial_number = new_dev.serial_number
             ))
 
@@ -1002,9 +1006,9 @@ class TLCCS:
         ):
 
         self.dev = usb.core.find(
-            idVendor = device_info.vid,
-            idProduct = device_info.pid,
-            backend = libusb_backend,
+            idVendor     = device_info.vid,
+            idProduct    = device_info.pid,
+            backend      = libusb_backend,
             custom_match = lambda d: d.serial_number == device_info.serial_number,
         )
 
@@ -1057,7 +1061,7 @@ class TLCCS:
 
     def get_scan_data_corrected_noise(
             self,
-            center_wl: float = 531.78,
+            center_wl:              float = 531.78,
             noise_amplification_dB: float = 1.0
         ) -> Tuple[array.array, float, float]:
 
@@ -1068,7 +1072,7 @@ class TLCCS:
         return get_scan_data_corrected_noise(
             self.dev,
             self.data,
-            center_wl = center_wl,
+            center_wl              = center_wl,
             noise_amplification_dB = noise_amplification_dB
         )
 

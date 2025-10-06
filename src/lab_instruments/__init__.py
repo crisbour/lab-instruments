@@ -11,20 +11,18 @@ sys.path.insert(0, os.path.dirname(__file__))
 # Now import the modules
 from . import delay_gen as delay_gen
 from . import laser as laser
-from . import load_qc as quantic
 from . import pm400 as power_meter
 from . import h5_utils as h5_utils
 from . import zaber as zaber
-from .load_qc import jl as jl
-from .load_qc import jlconvert as jlconvert
+from . import tlccs as thorlabs
+from .load_qc import jl
 
 __all__ = [
     'delay_gen',
     'laser',
     'power_meter',
-    #'quantic',
     'jl',
-    'jlconvert',
     'h5_utils',
     'zaber',
+    'thorlabs',
 ]
