@@ -15,7 +15,7 @@ class PM400Error(Exception):
     pass
 
 class PowerMeter:
-    _wavelengths_range = np.linspace(400, 1100, 50)  # nm
+    _wavelengths_range = np.linspace(400, 1100, 15)  # 50 nm steps
     h5_instrument = None
     h5_dict = {}
     pm_resource : pyvisa.resources.Resource

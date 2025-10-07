@@ -1,6 +1,6 @@
 [project]
 name = "lab-instruments"
-version = "0.9.3"
+version = "0.9.5"
 description = "Control for instruments and sensors in the lab, adding custom API"
 readme = "README.md"
 authors = [
@@ -68,7 +68,7 @@ include-package-data = true
 where = ["src"]
 
 [tool.setuptools.package-data]
-"lab_instruments" = ["Project.toml", "Manifest.toml"]
+"lab_instruments" = ["Project.toml", "Manifest.toml", "ccs_firmware/*"]
 
 #[build-system]
 #requires = ["hatchling", "editables"]

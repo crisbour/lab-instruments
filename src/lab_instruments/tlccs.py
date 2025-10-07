@@ -17,10 +17,13 @@ import usb.util
 import struct
 import time
 import math
-from typing import Optional, Tuple, NamedTuple, Dict, List
+from typing import Optional, Tuple, NamedTuple, Dict, List, Union
 import numpy as np
 from pathlib import Path
-from importlib.resources import files, as_file
+from importlib.resources import files
+from logging import warning
+import inspect
+import h5py
 
 import sys
 if sys.platform == 'win32':
@@ -951,8 +954,8 @@ class DevInfo(NamedTuple):
     serial_number: str
 
 
-#DEFAULT_FIRMWARE_PATH = Path(files("lab_instruments").joinpath('ccs_firmware'))
-DEFAULT_FIRMWARE_PATH = Path(__file__).parent / 'ccs_firmware'
+DEFAULT_FIRMWARE_PATH = Path(str(files("lab_instruments").joinpath('ccs_firmware')))
+#DEFAULT_FIRMWARE_PATH = Path(__file__).parent / 'ccs_firmware'
 DEFAULT_FIRMWARE_FILE = {
     CCS100_PID_U: DEFAULT_FIRMWARE_PATH / 'CCS100.spt',
     CCS125_PID_U: DEFAULT_FIRMWARE_PATH / 'CCS125.spt',
@@ -1090,3 +1093,75 @@ class TLCCS:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
+
+# Decorator to dynamically add methods from TLCCS to Spectrometer
+def compose_methods_from_tlccs(cls):
+    for name, method in inspect.getmembers(TLCCS, predicate=inspect.isfunction):
+        if not hasattr(cls, name):  # Avoid overwriting existing methods
+            setattr(cls, name, lambda self, *args, **kwargs: getattr(self.tlccs, name)(*args, **kwargs))
+    return cls
+
+@compose_methods_from_tlccs
+class Spectrometer:
+    tlccs: Union[TLCCS, None] = None
+    h5_dict = {}
+    wavelengths: array.array = array.array('f4')
+
+    def __init__(self, h5_instrument=None):
+        ccs_devices = list_spectrometers()
+        if len(ccs_devices) == 0:
+            raise DeviceNotFound("No CCS spectrometer found")
+        if len(ccs_devices) > 1:
+            warning("Multiple CCS spectrometers found, using the first one")
+        self.tlccs = TLCCS(ccs_devices[0])
+        if h5_instrument is not None:
+            self.h5_instrument = h5_instrument
+            self.hdf5_describe(h5_instrument)
+
+    def hdf5_describe(self, h5_instrument: h5py.Group):
+        # Extract device wavelengths
+        if self.tlccs is None:
+            raise RuntimeError("TLCCS instance is not initialized")
+        self.wavelengths: array.array = self.tlccs.get_wavelength()
+
+        spectrometer_inst = h5_instrument.create_group("spectrometer")
+        spectrometer_inst.attrs['NX_class'] = "NXinstrument" # https://manual.nexusformat.org/classes/base_classes/NXsource.html#index-0
+        spectrometer_inst.create_dataset("name", data="Thorlabs CCS100-CCS200 Spectrometer")
+        spectrometer_inst.create_dataset("type", data="Spectrometer")
+        spectrometer_inst.create_dataset("manufacturer", data="Thorlabs")
+
+        spectrometer_datasheet = spectrometer_inst.create_group("specs")
+        spectrometer_datasheet.attrs['NX_class'] = 'NXtechnical_data'
+        spectrometer_datasheet.create_dataset("datasheet", data="https://www.thorlabs.com/thorproduct.cfm?partnumber=CCS200")
+
+        data = spectrometer_inst.create_group("data")
+        data.attrs['NX_class'] = 'NXdata'
+        data.attrs['description'] = 'Measured normalized spectrum'
+        data.attrs['axes'] = ['intensity:wavelengths']
+
+        wavelengths_ds = data.create_dataset("wavelengths", data=self.wavelengths)
+        wavelengths_ds.attrs['units'] = "nm"
+        wavelengths_ds.attrs['name'] = "Wavelength"
+        wavelengths_ds.attrs['axes'] = "λ"
+
+        intensity_ds = data.create_dataset("intensity", shape=(len(self.wavelengths),), dtype='f4')
+        intensity_ds.attrs['units'] = ""
+        intensity_ds.attrs['name'] = "Normalized intensity"
+        intensity_ds.attrs['axes'] = "Φ"
+
+        self.h5_dict['instrument'] = h5_instrument
+        self.h5_dict['spectrometer'] = spectrometer_inst
+        self.h5_dict['data'] = data
+
+    def scan_specturm(self, integration_time=5):
+        if self.tlccs is None:
+            raise DeviceNotFound("Spectrometer not initialized")
+        self.tlccs.set_integration_time(integration_time) # in seconds
+        self.tlccs.start_single_scan()
+        spectrum = self.tlccs.get_scan_data_factory()
+        if 'data' in self.h5_dict:
+            data_group = self.h5_dict['data']
+            intensity_ds = data_group['intensity']
+            intensity_ds[:] = spectrum
+        return spectrum
+
