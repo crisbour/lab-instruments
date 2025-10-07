@@ -1105,7 +1105,7 @@ def compose_methods_from_tlccs(cls):
 class Spectrometer:
     tlccs: Union[TLCCS, None] = None
     h5_dict = {}
-    wavelengths: array.array = array.array('f4')
+    wavelengths: array.array = array.array('f')
 
     def __init__(self, h5_instrument=None):
         ccs_devices = list_spectrometers()
